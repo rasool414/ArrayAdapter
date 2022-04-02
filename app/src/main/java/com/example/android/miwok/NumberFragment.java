@@ -3,17 +3,19 @@ package com.example.android.miwok;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 
-public class PhrasesActivity extends AppCompatActivity {
-    private MediaPlayer mediaPlayer;
+public class NumberFragment extends Fragment {
 
+    private MediaPlayer mediaPlayer;
     private AudioManager mAudioManager;
 
     AudioManager.OnAudioFocusChangeListener mOnAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
@@ -32,6 +34,7 @@ public class PhrasesActivity extends AppCompatActivity {
                 // stop playback
                 releaseMediaPlayer();
             }
+
         }
     };
 
@@ -43,29 +46,39 @@ public class PhrasesActivity extends AppCompatActivity {
         }
     };
 
+
+    public NumberFragment() {
+
+    }
+
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.word_list);
-        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.word_list, container, false);
+
+        mAudioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
 
         final ArrayList<Word> words = new ArrayList<Word>();
 
-        words.add(new Word("where are you going?", "minto wuksus", R.raw.phrase_where_are_you_going));
-        words.add(new Word("what is your name/", "tinna oyaasina", R.raw.phrase_what_is_your_name));
-        words.add(new Word("my name is ", "oyyasit", R.raw.phrase_my_name_is));
-        words.add(new Word("how are you feeling?", "michaksas", R.raw.phrase_how_are_you_feeling));
-        words.add(new Word("i m feeling good", "kuchi achit", R.raw.phrase_im_feeling_good));
-        words.add(new Word("are you coming", "aanas aa", R.raw.phrase_are_you_coming));
-        words.add(new Word("yes i am coming ", "haa aanam", R.raw.phrase_yes_im_coming));
-        words.add(new Word("i ma coming", "anam", R.raw.phrase_im_coming));
+
+        words.add(new Word("one", "lutti", R.drawable.number_one, R.raw.number_one));
+        words.add(new Word("two", "otiiko", R.drawable.number_two, R.raw.number_two));
+        words.add(new Word("three", "tolookasu", R.drawable.number_three, R.raw.number_three));
+        words.add(new Word("four", "oyyisa", R.drawable.number_four, R.raw.number_four));
+        words.add(new Word("five", "massokka", R.drawable.number_five, R.raw.number_five));
+        words.add(new Word("six", "massokka", R.drawable.number_six, R.raw.number_six));
+        words.add(new Word("seven", "temmokka", R.drawable.number_seven, R.raw.number_seven));
+        words.add(new Word("eight", "kenekkaku", R.drawable.number_eight, R.raw.number_eight));
+        words.add(new Word("nine", "kawinta", R.drawable.number_nine, R.raw.number_nine));
+        words.add(new Word("ten", "na' aacha", R.drawable.number_ten, R.raw.number_ten));
 
 
-        WordAdapter Adapter = new WordAdapter(this, words, R.color.category_phrases);
+        WordAdapter Adapter = new WordAdapter(getActivity(), words, R.color.category_numbers);
 
-        ListView listView = (ListView) findViewById(R.id.list);
-
+        ListView listView = (ListView) rootView.findViewById(R.id.list);
         listView.setAdapter(Adapter);
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -73,20 +86,21 @@ public class PhrasesActivity extends AppCompatActivity {
 
                 releaseMediaPlayer();
 
-
                 int result = mAudioManager.requestAudioFocus(mOnAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
                 if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-
-                    mediaPlayer = MediaPlayer.create(PhrasesActivity.this, word.getAudioResource());
+                    mediaPlayer = MediaPlayer.create(getActivity(), word.getAudioResource());
                     mediaPlayer.start();
                     mediaPlayer.setOnCompletionListener(mCompletionListener);
                 }
             }
         });
+
+        return rootView;
     }
 
+
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
         releaseMediaPlayer();
     }
@@ -99,6 +113,4 @@ public class PhrasesActivity extends AppCompatActivity {
 
         }
     }
-
-
 }

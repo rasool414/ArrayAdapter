@@ -3,15 +3,19 @@ package com.example.android.miwok;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 
-public class ColorsActivity extends AppCompatActivity {
+public class PhrasesFragment extends Fragment {
+
+
     private MediaPlayer mediaPlayer;
 
     private AudioManager mAudioManager;
@@ -43,28 +47,35 @@ public class ColorsActivity extends AppCompatActivity {
         }
     };
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.word_list);
 
-        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+    public PhrasesFragment() {
+        // Required empty public constructor
+    }
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        View rootView = inflater.inflate(R.layout.word_list, container, false);
+
+        mAudioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
 
         final ArrayList<Word> words = new ArrayList<Word>();
 
-        words.add(new Word("Red", "wetetti", R.drawable.color_red, R.raw.color_red));
-        words.add(new Word("mustard yellow", "chiwiite", R.drawable.color_mustard_yellow, R.raw.color_mustard_yellow));
-        words.add(new Word("dusty yellow", "topiisa", R.drawable.color_dusty_yellow, R.raw.color_dusty_yellow));
-        words.add(new Word("green", "chokokki", R.drawable.color_green, R.raw.color_green));
-        words.add(new Word("brown", "takaakki", R.drawable.color_brown, R.raw.color_brown));
-        words.add(new Word("gray", "topoppi", R.drawable.color_gray, R.raw.color_gray));
-        words.add(new Word("black", "kululli", R.drawable.color_black, R.raw.color_black));
-        words.add(new Word("white", "kelilli", R.drawable.color_white, R.raw.color_white));
+        words.add(new Word("where are you going?", "minto wuksus", R.raw.phrase_where_are_you_going));
+        words.add(new Word("what is your name/", "tinna oyaasina", R.raw.phrase_what_is_your_name));
+        words.add(new Word("my name is ", "oyyasit", R.raw.phrase_my_name_is));
+        words.add(new Word("how are you feeling?", "michaksas", R.raw.phrase_how_are_you_feeling));
+        words.add(new Word("i m feeling good", "kuchi achit", R.raw.phrase_im_feeling_good));
+        words.add(new Word("are you coming", "aanas aa", R.raw.phrase_are_you_coming));
+        words.add(new Word("yes i am coming ", "haa aanam", R.raw.phrase_yes_im_coming));
+        words.add(new Word("i ma coming", "anam", R.raw.phrase_im_coming));
 
 
-        WordAdapter Adapter = new WordAdapter(this, words, R.color.category_colors);
+        WordAdapter Adapter = new WordAdapter(getActivity(), words, R.color.category_phrases);
 
-        ListView listView = (ListView) findViewById(R.id.list);
+        ListView listView = (ListView) rootView.findViewById(R.id.list);
 
         listView.setAdapter(Adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -78,16 +89,20 @@ public class ColorsActivity extends AppCompatActivity {
                 int result = mAudioManager.requestAudioFocus(mOnAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
                 if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
 
-                    mediaPlayer = MediaPlayer.create(ColorsActivity.this, word.getAudioResource());
+                    mediaPlayer = MediaPlayer.create(getActivity(), word.getAudioResource());
                     mediaPlayer.start();
                     mediaPlayer.setOnCompletionListener(mCompletionListener);
                 }
             }
         });
+
+        return rootView;
+
     }
 
+
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
         releaseMediaPlayer();
     }
@@ -100,6 +115,5 @@ public class ColorsActivity extends AppCompatActivity {
 
         }
     }
-
 
 }
